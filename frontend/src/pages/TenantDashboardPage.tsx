@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AppHeader } from "../components/AppHeader";
+import { ChatWorkspace } from "../features/chat/components/ChatWorkspace";
 import { DocumentList } from "../features/documents/components/DocumentList";
 import { DocumentUploadForm } from "../features/documents/components/DocumentUploadForm";
 import { TenantAccessForm } from "../features/documents/components/TenantAccessForm";
@@ -19,6 +20,7 @@ export function TenantDashboardPage() {
   const [documentError, setDocumentError] = useState<string | null>(null);
   const documentsQuery = useDocuments(selectedTenantId || null, tenantApiKey);
   const uploadDocumentMutation = useUploadDocument(selectedTenantId || null, tenantApiKey);
+  const selectedTenantName = tenantsQuery.data?.find((tenant) => tenant.id === selectedTenantId)?.name;
 
   async function handleCreateTenant(name: string) {
     setFormError(null);
@@ -68,6 +70,7 @@ export function TenantDashboardPage() {
         {documentsQuery.isError && <p className="error" role="alert">Could not load documents. Check that this key belongs to the selected tenant.</p>}
         {documentsQuery.data && <DocumentList documents={documentsQuery.data} />}
       </section>
+      <ChatWorkspace enabled={Boolean(selectedTenantId && tenantApiKey)} apiKey={tenantApiKey} tenantName={selectedTenantName} />
       <section className="panel">
         <div className="section-title"><div><h2>Tenants</h2><p>Each tenant receives a server API key and a public widget key.</p></div></div>
         <CreateTenantForm isSubmitting={createTenantMutation.isPending} onSubmit={handleCreateTenant} />
