@@ -1,0 +1,2 @@
+import type { Tenant } from "../types/tenant";
+export function TenantList({ tenants }: { tenants: Tenant[] }) { if (tenants.length === 0) return <div className="empty">No tenants yet. Create your first isolated knowledge base above.</div>; return <ul>{tenants.map((tenant) => <li key={tenant.id}><div><strong>{tenant.name}</strong><small>Widget key: {tenant.publicWidgetKey}</small></div><span>Ready for documents</span></li>)}</ul>; }

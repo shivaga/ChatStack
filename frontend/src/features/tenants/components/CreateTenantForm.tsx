@@ -1,0 +1,3 @@
+import { useState, type FormEvent } from "react";
+type Props = { isSubmitting: boolean; onSubmit: (name: string) => Promise<void> };
+export function CreateTenantForm({ isSubmitting, onSubmit }: Props) { const [name, setName] = useState(""); async function handleSubmit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); await onSubmit(name); setName(""); } return <form onSubmit={handleSubmit}><input value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. Acme Support" minLength={2} required disabled={isSubmitting} /><button type="submit" disabled={isSubmitting}>{isSubmitting ? "Creating..." : "Create tenant"}</button></form>; }
