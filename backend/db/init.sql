@@ -3,7 +3,8 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  google_id TEXT UNIQUE NOT NULL,
+  auth_user_id UUID UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
+  google_id TEXT UNIQUE,
   email TEXT UNIQUE NOT NULL,
   display_name TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -14,6 +15,13 @@ CREATE TABLE tenants (
   name TEXT NOT NULL,
   public_widget_key TEXT UNIQUE NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE TABLE tenant_memberships (
+  tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  role TEXT NOT NULL CHECK (role IN ('owner','admin','editor','viewer')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (tenant_id, user_id)
 );
 CREATE TABLE api_keys (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -43,4 +51,7 @@ CREATE TABLE chunks (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX chunks_tenant_document_idx ON chunks(tenant_id, document_id);
+CREATE INDEX tenant_memberships_user_idx ON tenant_memberships(user_id, tenant_id);
 CREATE INDEX chunks_embedding_hnsw_idx ON chunks USING hnsw (embedding vector_cosine_ops);
+
+REVOKE ALL ON users, tenants, tenant_memberships, api_keys, documents, chunks FROM anon, authenticated;

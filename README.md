@@ -21,13 +21,21 @@ The project is documented in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [d
 
 ## Configure
 
-Copy `.env.example` to `.env`, then set the real values for `DATABASE_URL`, `REDIS_URL`, and `GEMINI_API_KEY`. Never commit `.env`.
+Copy `.env.example` to `.env`, then set the real values for `DATABASE_URL`, `REDIS_URL`, `GEMINI_API_KEY`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_URL`, and `VITE_SUPABASE_PUBLISHABLE_KEY`. Never commit `.env`.
 
 Run the SQL schema once in the Supabase SQL editor:
 
 ```sql
 -- Paste the contents of backend/db/init.sql
 ```
+
+For an existing database created before authentication was added, run:
+
+```powershell
+npm run migrate:auth
+```
+
+See [docs/AUTHENTICATION.md](docs/AUTHENTICATION.md) for the Supabase dashboard configuration and authorization model.
 
 ## Run locally
 
